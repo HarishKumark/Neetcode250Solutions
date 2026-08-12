@@ -1,15 +1,11 @@
 package com.daily.neetcodeSolns;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ArrayConcatenation {
 
     public static void main(String[] args) {
 
 
     }
-
 
     public int[] getConcatenation(int[] nums) {
         int len = nums.length;
