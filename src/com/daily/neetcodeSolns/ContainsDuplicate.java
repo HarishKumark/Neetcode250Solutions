@@ -9,9 +9,8 @@ public class ContainsDuplicate {
         for (int i = 0; i < nums.length; i++) {
             if (list.contains(nums[i])) {
                 return true;
-            } else {
-                list.add(nums[i]);
             }
+            list.add(nums[i]);
         }
 
         return false;

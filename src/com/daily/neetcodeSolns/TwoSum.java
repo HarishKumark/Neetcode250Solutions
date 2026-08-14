@@ -12,7 +12,7 @@ public class TwoSum {
             for (int j = 0; j < nums.length; j++) {
                 if (i != j) {
                     if (nums[i] + nums[j] == target) {
-                        return new int[]{i, 2};
+                        return new int[]{i, j};
                     }
                 }
             }
