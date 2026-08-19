@@ -1,6 +1,7 @@
 package com.java.practise;
 
 import java.util.*;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,7 +37,7 @@ public class Counting {
     class Employee {
         String name;
         String department;
-        String salary;
+        int salary;
 
         public String getName() {
             return name;
@@ -54,19 +55,68 @@ public class Counting {
             this.department = department;
         }
 
-        public String getSalary() {
+        public int getSalary() {
             return salary;
         }
 
-        public void setSalary(String salary) {
+        public void setSalary(int salary) {
             this.salary = salary;
         }
     }
 
     public static void getHighestPaidEmp(List<Employee> list) {
 
-        list.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.maxBy(Comparator.comparing(Employee::getSalary))));
 
+        List<Employee> collect11 = list.stream().sorted(
+                Comparator.comparing(Employee::getDepartment)
+                        .thenComparing(Comparator.comparingInt(Employee::getSalary)
+                                .reversed())).collect(Collectors.toList());
+
+        Map<String, Employee> collect10 = list.stream().collect(Collectors.toMap(Employee::getDepartment, Function.identity(), BinaryOperator.minBy(Comparator.comparingInt(Employee::getSalary))));
+
+        list.stream().collect(Collectors.toMap(Employee::getDepartment, Function.identity(), (esal, newsal) -> esal.getSalary() > newsal.getSalary() ? esal : newsal));
+
+        LinkedHashMap<String, Integer> collect9 = list.stream().collect(Collectors.toMap(Employee::getName, Employee::getSalary, Integer::max, LinkedHashMap::new));
+
+
+        Map<String, Map<Boolean, Long>> collect8 = list.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.partitioningBy(e -> e.getSalary() >= 60_000, Collectors.counting())));
+
+        Map<String, Map<Boolean, List<Employee>>> collect7 = list.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.partitioningBy(e -> e.getSalary() >= 60_000)));
+
+
+        Map<String, IntSummaryStatistics> collect6 = list.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.summarizingInt(Employee::getSalary)));
+        Map<String, String> collect5 = list.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.mapping(Employee::getName, Collectors.joining(", "))));
+        Map<String, Set<String>> collect4 = list.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.mapping(Employee::getName, Collectors.toSet())));
+        Map<String, List<String>> collect3 = list.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.mapping(Employee::getName, Collectors.toList())));
+
+
+        list.stream().collect(Collectors.groupingBy(Employee::getDepartment)).entrySet().stream()
+                .flatMap(e -> e.getValue().stream().map(
+                        Employee::getName
+                )).collect(Collectors.toList());
+
+        Map<Boolean, Long> collect2 = list.stream().collect(Collectors.partitioningBy(employee -> employee.getSalary() >= 60_000, Collectors.counting()));
+
+        Map<Boolean, List<Employee>> collect1 = list.stream().collect(Collectors.partitioningBy(employee -> employee.getSalary() >= 60_000));
+
+
+        String notFound = list.stream().filter(e -> "HR".equalsIgnoreCase(e.getDepartment())).findFirst().map(Employee::getName).orElse("Not Found");
+
+        list.stream().filter(e -> "HR".equalsIgnoreCase(e.getDepartment())).findAny();
+
+        list.stream().filter(employee -> employee.getSalary() > 60000).findFirst();
+
+        list.stream().filter(e -> "IT".equalsIgnoreCase(e.getDepartment()) && "ALICE".equalsIgnoreCase(e.getName())).map(e -> e.getName()).findFirst();
+
+        list.stream().filter(e -> e.getDepartment().equalsIgnoreCase("IT")).findFirst();
+        list.stream().min(Comparator.comparingInt(Employee::getSalary));
+
+        list.stream().max(Comparator.comparingInt(Employee::getSalary));
+        Map<String, Optional<Employee>> collect = list.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.maxBy(Comparator.comparingInt(Employee::getSalary))));
+
+        list.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.averagingInt(Employee::getSalary)));
+
+        list.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.maxBy(Comparator.comparing(Employee::getSalary))));
 
     }
 
