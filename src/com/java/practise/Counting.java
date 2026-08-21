@@ -9,6 +9,26 @@ import java.util.stream.Stream;
 public class Counting {
 
     public static void main(String[] args) {
+
+
+//
+//        String s = "swiss";
+//
+//        Map<Character, Integer> map = new HashMap<>();
+//
+//        for (char str : s.toCharArray()) {
+//            map.put(str, map.getOrDefault(str, 0) + 1);
+//        }
+//
+//        for (char m : s.toCharArray()) {
+//            if (map.get(m) == 1) {
+//                return Optional.of(m);
+//            }
+//        }
+//
+//         s.chars().mapToObj(e -> (char)e).map(Character::new)
+//                 .collect(Collectors.groupingBy(Function.identity(),  LinkedHashMap::new, Collectors.counting()));
+
 //        List<List<Integer>> list = new ArrayList<>();
 //        for (int i = 1; i < 3; i++) {
 ////            list.add(i);
@@ -29,10 +49,51 @@ public class Counting {
 //        flattenList(list);
 
         String[] str = new String[]{"Java", "Code", "Scala", "Spring"};
-        List<String> collect = Arrays.stream(str).collect(Collectors.toList());
 
-        listIntoMap(collect);
+        List<String> list = Arrays.stream(str).collect(Collectors.toList());
+
+//        List<String> list1 = list.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting())).entrySet().stream()
+//                .sorted(Comparator.comparingInt(e -> e.getValue().intValue()).reversed().thenComparing(entry -> entry.getKey()))
+//                .limit(2).map(e -> e.getKey()).collect(Collectors.toList());
+
+
+        List<String> collect = list.stream()
+                .distinct()
+                .sorted(Comparator.comparingInt(String::length).reversed()
+                        .thenComparing(String::compareToIgnoreCase))
+                .limit(3).collect(Collectors.toList());
+
+        listIntoMap(list);
     }
+
+
+    public static Set<Integer> findDuplicatesUsingStreams(int[] numbers) {
+
+        return Arrays.stream(numbers).mapToObj(e -> e)
+                .collect(Collectors.groupingBy(e -> e, Collectors.counting()))
+                .entrySet().stream()
+                .filter(e -> e.getValue() > 1 && e.getValue() <= 2).map(Map.Entry::getKey).distinct().collect(Collectors.toSet());
+    }
+
+    public static Set<Integer> findDuplicates(int[] numbers) {
+
+
+        Map<Integer, Integer> map = new HashMap<>();
+
+        for (int n : numbers) {
+            map.put(n, map.getOrDefault(n, 0) + 1);
+        }
+
+        Set<Integer> set = new HashSet<>();
+        for (int n : numbers) {
+            if (map.get(n) > 1 && map.get(n) <= 2) {
+                if(!set.contains(n))
+                    set.add(n);
+            }
+        }
+        return set;
+    }
+
 
     class Employee {
         String name;
@@ -67,12 +128,44 @@ public class Counting {
     public static void getHighestPaidEmp(List<Employee> list) {
 
 
+        Optional<Employee> hr = list.stream()
+                .filter(e -> e.getDepartment().equalsIgnoreCase("HR"))
+                .collect(Collectors.maxBy(Comparator.comparingInt(Employee::getSalary)));
+
+
+        Map<String, Integer> collect14 = list.stream().collect(Collectors.toMap(Employee::getName, Employee::getSalary, Integer::max));
+
+        Map<String, Integer> collect13 = list.stream()
+                .filter(e -> e.getSalary() >= 60_000)
+                .collect(Collectors.groupingBy(Employee::getDepartment, Collectors.summingInt(Employee::getSalary)));
+
+        Comparator<Employee> bySalAsc = Comparator.comparingInt(Employee::getSalary).reversed();
+        Comparator<Employee> employeeComparator = bySalAsc.thenComparing(Employee::getName);
+
+        List<String> collect12 = list.stream().filter(e -> e.getSalary() >= 60_000)
+                .sorted(employeeComparator).limit(3).map(Employee::getName).collect(Collectors.toList());
+
+        list.stream().sorted(bySalAsc).collect(Collectors.groupingBy(Employee::getDepartment, Collectors.mapping(Employee::getName, Collectors.toList())));
+
+
+        Comparator<Employee> byDepartment =
+                Comparator.comparing(Employee::getDepartment);
+
+        Comparator<Employee> bySalaryDescending =
+                Comparator.comparingInt(Employee::getSalary).reversed();
+
+        Comparator<Employee> byName =
+                Comparator.comparing(Employee::getName);
+
+        list.stream().sorted(byDepartment.thenComparing(bySalaryDescending).thenComparing(byName)).collect(Collectors.toList());
+
         List<Employee> collect11 = list.stream().sorted(
                 Comparator.comparing(Employee::getDepartment)
                         .thenComparing(Comparator.comparingInt(Employee::getSalary)
                                 .reversed())).collect(Collectors.toList());
 
-        Map<String, Employee> collect10 = list.stream().collect(Collectors.toMap(Employee::getDepartment, Function.identity(), BinaryOperator.minBy(Comparator.comparingInt(Employee::getSalary))));
+        Map<String, Employee> collect10 = list.stream().collect(Collectors.toMap(Employee::getDepartment, Function.identity(),
+                BinaryOperator.minBy(Comparator.comparingInt(Employee::getSalary))));
 
         list.stream().collect(Collectors.toMap(Employee::getDepartment, Function.identity(), (esal, newsal) -> esal.getSalary() > newsal.getSalary() ? esal : newsal));
 
