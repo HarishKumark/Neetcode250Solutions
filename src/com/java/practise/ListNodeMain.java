@@ -6,18 +6,20 @@ public class ListNodeMain {
 
     }
 
-        public static ListNode reverse(ListNode head){
-            if(head ==null){
-                return head;
-            }
-
-            ListNode previous = null;
-            ListNode current = head;
-            while (head!=null){
-                previous = current.next;
-                previous.value = current.value;
-                previous = current;
-            }
-            return previous;
+    public static ListNode reverse(ListNode head) {
+        if (head == null) {
+            return head;
         }
+
+        ListNode previous = null;
+        ListNode next = null;
+        ListNode current = head;
+        while (current != null) {
+            next = current.next;
+            current.next = previous;
+            previous = current;
+            current = next;
+        }
+        return previous;
+    }
 }
