@@ -1,47 +1,48 @@
 package com.daily.neetcodeSolns;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GroupAnagrams {
 
     public static void main(String[] args) {
 
 
+        List<List<String>> lists = new GroupAnagrams().groupAnagrams(new String[]{"act", "pots", "tops", "cat", "stop", "hat"});
 
-        new GroupAnagrams().groupAnagrams(new String[]{"act", "pots", "tops", "cat", "stop", "hat"});
+
+        System.out.println(lists);
+        System.out.println(majorityElement(new int[]{5,5,1,1,1,5,5}));;
+
     }
 
-    static String getHash(String s) {
-        StringBuilder hash = new StringBuilder();
-        int[] freq = new int[26];
-        for (char ch : s.toCharArray()) {
-            freq[ch - 'a']++;
-        }
-        for (int i = 0; i < 26; i++) {
-            hash.append(freq[i]);
-        }
 
-        return hash.toString();
+    public static  int majorityElement(int[] nums) {
+        int maxCount = nums.length/2;
+        int res = Integer.MIN_VALUE;
+        Map<Integer, Integer> map = new HashMap<>();
+
+        for(int i =0; i< nums.length; i++){
+            map.put(nums[i], map.getOrDefault(nums[i], 0)+1);
+            if(map.get(nums[i]) > maxCount){
+                res = Math.max(nums[i], res);
+            }
+        }
+        return res;
     }
+
 
     public List<List<String>> groupAnagrams(String[] strs) {
-        List<List<String>> res = new ArrayList<>();
 
-        Map<String, Integer> mp = new HashMap<>();
-
-        for (int i = 0; i < strs.length; i++) {
-            String key = getHash(strs[i]);
-            if (!mp.containsKey(key)) {
-                mp.put(key, res.size());
-                res.add(new ArrayList<>());
-            }
-            res.get(mp.get(key)).add(strs[i]);
+        Map<String, List<String>> map = new HashMap<>();
+        for (String str : strs) {
+            char ch[] = str.toCharArray();
+            Arrays.sort(ch);
+            String key = new String(ch);
+            List<String> orDefault = map.getOrDefault(key, new ArrayList<>());
+            orDefault.add(str);
+            map.put(key, orDefault);
         }
-
-        return res;
+        return new ArrayList<>(map.values());
     }
 
 }
