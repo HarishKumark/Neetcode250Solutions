@@ -1,5 +1,8 @@
 package com.daily.leetcodeSolns;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Solution {
 
     public static void main(String[] args) {
@@ -7,6 +10,27 @@ public class Solution {
 //        solution.countCommas(1002);
 //        solution.maxPalindromes("abaccdbbd", 3);
         System.out.println(solution.numberOfSets(4, 2));
+    }
+
+
+    public boolean isValidAnagrams(String s1, String s2) {
+        if (s1.length() != s2.length()) {
+            return false;
+        }
+        int[] freq = new int[26];
+        for (int i = 0; i < s1.length(); i++)
+            freq[s1.charAt(i) - 'a']++;
+
+        for (int i = 0; i < s2.length(); i++)
+            freq[s2.charAt(i) - 'a']--;
+
+        for (int i = 0; i < freq.length; i++) {
+            if (freq[i] != 0) {
+                return false;
+            }
+        }
+        return true;
+
     }
 
 
@@ -26,8 +50,8 @@ public class Solution {
         for (int j = 1; j <= k; j++) {
             int runningTotal = 0;
             for (int l = 2; l <= n; l++) {
-                runningTotal = (runningTotal+dp[l - 1][j - 1]) % 1_000_000_007;
-                dp[l][j] = (dp[l - 1][j] + runningTotal)% 1_000_000_007;
+                runningTotal = (runningTotal + dp[l - 1][j - 1]) % 1_000_000_007;
+                dp[l][j] = (dp[l - 1][j] + runningTotal) % 1_000_000_007;
             }
         }
 
