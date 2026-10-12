@@ -1,9 +1,7 @@
-package com.java.practise;
+package com.daily.java.practise;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class JavaStreamsPractise1 {

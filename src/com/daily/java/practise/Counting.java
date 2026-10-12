@@ -1,10 +1,9 @@
-package com.java.practise;
+package com.daily.java.practise;
 
 import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Counting {
 

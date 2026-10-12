@@ -1,4 +1,4 @@
-package com.java.practise;
+package com.daily.java.practise;
 
 import java.util.ArrayList;
 import java.util.List;

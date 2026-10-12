@@ -1,6 +1,5 @@
-package com.java.practise;
+package com.daily.java.practise;
 
-import java.util.Map;
 import java.util.PriorityQueue;
 
 public class PriorityQueuePractise {

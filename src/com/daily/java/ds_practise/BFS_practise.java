@@ -1,4 +1,4 @@
-package com.java.ds_practise;
+package com.daily.java.ds_practise;
 
 import java.util.*;
 

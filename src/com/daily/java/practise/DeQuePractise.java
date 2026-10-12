@@ -1,4 +1,4 @@
-package com.java.practise;
+package com.daily.java.practise;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

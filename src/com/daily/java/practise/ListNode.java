@@ -1,4 +1,4 @@
-package com.java.practise;
+package com.daily.java.practise;
 
 public class ListNode {
     int value;
