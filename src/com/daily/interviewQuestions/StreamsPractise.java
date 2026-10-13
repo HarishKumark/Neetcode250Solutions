@@ -1,8 +1,11 @@
 package com.daily.interviewQuestions;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class StreamsPractise {
 
@@ -120,63 +123,128 @@ public class StreamsPractise {
 
         Map<String, Double> collect2 = employeeList.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.averagingDouble(Employee::getSalary)));
         Map<String, Optional<Employee>> collect3 = employeeList.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary))));
+        List<Employee> collect4 = employeeList.stream()
+                .sorted(Comparator.comparingDouble(Employee::getSalary)
+                        .reversed().thenComparing(Employee::getName))
+                .collect(Collectors.toList());
+        Optional<Float> any = employeeList.stream()
+                .sorted(Comparator.comparingDouble(Employee::getSalary).reversed())
+                .map(e -> e.salary)
+                .distinct()
+                .skip(1).findFirst();
+        List<Employee> collect5 = employeeList.stream()
+                .sorted(Comparator.comparingDouble(Employee::getSalary).reversed())
+                .limit(3).collect(Collectors.toList());
 
-//        employeeList.stream().collect(Collectors.groupingBy(Employee::getDepartment))
+        Map<String, Employee> employeesById = employeeList.stream()
+                .collect(Collectors.toMap(
+                        Employee::getId,
+                        Function.identity(),
+                        (first, second) ->
+                                first.getSalary() >= second.getSalary() ? first : second
+                ));
+
+        String str = "";
+
+        String res = Optional.ofNullable(str)
+                .filter(e -> !e.trim().isEmpty())
+                .map(e -> e.toUpperCase())
+                .orElse("UNKNOWN");
+
+        Predicate<Employee> employeePredicate = employeeN -> employeeN.age > 30;
+        Predicate<Employee> employeePredicateSal = employeeN -> employeeN.salary > 50000;
+        List<Employee> collect6 = employeeList.stream()
+                .filter(employeePredicate.and(employeePredicateSal))
+                .collect(Collectors.toList());
+
+        MathOperation addition = (a, b) -> a + b;
+        MathOperation subtraction = (a, b) -> a - b;
+        MathOperation multiplication = (a, b) -> a * b;
+        addition.apply(10, 5);
+        subtraction.apply(10, 5);
+        multiplication.apply(10, 5);
+
+
+        List<Integer> numbers = Arrays.asList(10, 20, 30, 40);
+
+        CompletableFuture<Integer> sumFuture =
+                CompletableFuture.supplyAsync(() ->
+                        numbers.stream()
+                                .collect(Collectors.summingInt(Integer::intValue))
+                );
+
+
+        CompletableFuture<Integer> optionalCompletableFuture
+                = CompletableFuture.supplyAsync(() ->
+                numbers.stream()
+                        .max(Integer::compareTo).get()
+        );
+
+        String join = sumFuture.
+                thenCombine(optionalCompletableFuture,
+                        (sum, max) -> "Sum: " + sum + ", Max: " + max).join();
+
+        System.out.println(join);
     }
-}
 
-class Employee {
-    String id;
-    String name;
-    int age;
-    String department;
-    float salary;
+    class Employee {
+        String id;
+        String name;
+        int age;
+        String department;
+        float salary;
 
-    public Employee(String id, String name, int age, String department, float salary) {
-        this.id = id;
-        this.name = name;
-        this.age = age;
-        this.department = department;
-        this.salary = salary;
+        public Employee(String id, String name, int age, String department, float salary) {
+            this.id = id;
+            this.name = name;
+            this.age = age;
+            this.department = department;
+            this.salary = salary;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getAge() {
+            return age;
+        }
+
+        public void setAge(int age) {
+            this.age = age;
+        }
+
+        public String getDepartment() {
+            return department;
+        }
+
+        public void setDepartment(String department) {
+            this.department = department;
+        }
+
+        public float getSalary() {
+            return salary;
+        }
+
+        public void setSalary(float salary) {
+            this.salary = salary;
+        }
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public String getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(String department) {
-        this.department = department;
-    }
-
-    public float getSalary() {
-        return salary;
-    }
-
-    public void setSalary(float salary) {
-        this.salary = salary;
+    @FunctionalInterface
+    interface MathOperation {
+        int apply(int a, int b);
     }
 }
