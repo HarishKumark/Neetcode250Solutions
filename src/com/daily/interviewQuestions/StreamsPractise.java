@@ -1,11 +1,13 @@
 package com.daily.interviewQuestions;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class StreamsPractise {
 
-    public static void main(String[] args) {
+
+    public static void streamsEx() {
         List<Integer> list = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             list.add(i);
@@ -14,7 +16,7 @@ public class StreamsPractise {
         List<Integer> evenList = list.stream()
                 .filter(e -> e % 2 == 0)
                 .collect(Collectors.toList());
-        System.out.println(evenList);
+//        System.out.println(evenList);
 
         List<Integer> squareList = list.stream()
                 .map(e -> e * e).collect(Collectors.toList());
@@ -40,7 +42,7 @@ public class StreamsPractise {
 
 
         Map<Boolean, List<Integer>> collect3 = list.stream().collect(Collectors.partitioningBy(e -> e % 2 == 0, Collectors.toList()));
-        System.out.println(collect3);
+//        System.out.println(collect3);
 
 
         List<List<Integer>> listNew = new ArrayList<>();
@@ -68,8 +70,113 @@ public class StreamsPractise {
                         .thenComparing(String::compareTo))
                 .collect(Collectors.toList());
 
+        Map<Integer, List<String>> collect6 = stringList.stream()
+                .collect(Collectors.groupingBy(String::length));
 
+//        System.out.println(collect6);
 
 //        System.out.println(squareList);
+
+        String str = "swiss";
+
+        LinkedHashMap<Character, Long> collect7 = str.chars().mapToObj(ele -> (char) ele)
+                .collect(Collectors.groupingBy(
+                        Function.identity(), LinkedHashMap::new, Collectors.counting()));
+        Optional<Character> first = collect7.entrySet().stream()
+                .filter(e -> e.getValue() == 1)
+                .map(Map.Entry::getKey)
+                .findFirst();
+
+
+        Map<String, Long> collect8 = stringList.stream().collect(Collectors.groupingBy(String::toLowerCase, Collectors.counting()));
+//        System.out.println(collect8);
+
+        List<String> stringListNew = Arrays.asList("eat", "tea", "tan", "ate", "nat", "bat");
+        Map<String, List<String>> collect9 = stringListNew.stream()
+                .collect(Collectors.groupingBy(e -> {
+                    char[] charArray = e.toCharArray();
+                    Arrays.sort(charArray);
+                    return new String(charArray);
+                }));
+        String collect10 = stringListNew.stream().map(String::toUpperCase).collect(Collectors.joining(","));
+
+        Map<String, Long> collect11 = stringListNew.stream()
+                .collect(Collectors.groupingBy(String::toLowerCase, Collectors.counting()));
+        collect11.entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue()
+                        .thenComparing(Map.Entry.comparingByKey()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,          // Word
+                        Map.Entry::getValue,        // Count
+                        (sss, second) -> sss,   // Keep first value if keys repeat
+                        LinkedHashMap::new));
+    }
+
+    public static void main(String[] args) {
+        List<Employee> employeeList = new ArrayList<>();
+        Map<String, List<Employee>> collect = employeeList.stream().collect(Collectors.groupingBy(Employee::getDepartment));
+
+        Map<String, Long> collect1 = employeeList.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.counting()));
+
+        Map<String, Double> collect2 = employeeList.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.averagingDouble(Employee::getSalary)));
+        Map<String, Optional<Employee>> collect3 = employeeList.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary))));
+
+//        employeeList.stream().collect(Collectors.groupingBy(Employee::getDepartment))
+    }
+}
+
+class Employee {
+    String id;
+    String name;
+    int age;
+    String department;
+    float salary;
+
+    public Employee(String id, String name, int age, String department, float salary) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.department = department;
+        this.salary = salary;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public float getSalary() {
+        return salary;
+    }
+
+    public void setSalary(float salary) {
+        this.salary = salary;
     }
 }
